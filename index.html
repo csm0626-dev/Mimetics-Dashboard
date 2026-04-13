@@ -473,10 +473,14 @@ function renderTable(){
   tbody.innerHTML=page.map(d=>{
     const el=d.eval.split('\n').filter(Boolean);
     const hf=hasFiles(d);
-    // 보고서 버튼들
+    // 보고서 버튼들 - 복수 파일 처리
     let fileBtns='';
-    if(d.file_ko) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 국문</span>`;
-    if(d.file_en) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 영문</span>`;
+    const koCount=(d.file_ko||'').split('\n').filter(Boolean).length;
+    const enCount=(d.file_en||'').split('\n').filter(Boolean).length;
+    if(koCount>0) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 국문${koCount>1?` x${koCount}`:''}</span>`;
+    if(enCount>0) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 영문${enCount>1?` x${enCount}`:''}</span>`;
+    if(d.url_jp) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 일어</span>`;
+    if(d.url_cn) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 중문</span>`;
     if(!hf) fileBtns=`<span class="file-btn none">없음</span>`;
     return`<tr onclick="openModal('${d.code}')">
       <td class="no">${d.no}</td>
@@ -518,32 +522,40 @@ function openModal(code){
   const ev=d.eval.split('\n').filter(Boolean);
   document.getElementById('modal-evals').innerHTML=ev.map(e=>`<span class="eval-tag">${e}</span>`).join('')||'<span style="color:var(--text3);font-size:12px">정보 없음</span>';
 
-  // 보고서 파일 4개 언어
-  const docs=[
-    {lang:'국문',icon:'📄',name:d.file_ko,url:d.url_ko},
-    {lang:'영문',icon:'📄',name:d.file_en,url:d.url_en},
-    {lang:'일어',icon:'📄',name:d.file_jp,url:d.url_jp},
-    {lang:'중문',icon:'📄',name:'',url:d.url_cn},
-  ];
-  document.getElementById('modal-docs').innerHTML=docs.map(doc=>{
-    if(doc.url){
-      return`<a class="doc-item" href="${doc.url}" target="_blank" rel="noopener">
-        <span class="doc-icon">${doc.icon}</span>
-        <div class="doc-info"><div class="doc-lang">${doc.lang} 보고서</div><div class="doc-name">${doc.name||'파일 보기'}</div></div>
-        <span class="doc-arrow">↗</span>
-      </a>`;
-    } else if(doc.name){
-      return`<div class="doc-item" style="cursor:default">
-        <span class="doc-icon">📄</span>
-        <div class="doc-info"><div class="doc-lang">${doc.lang} 보고서</div><div class="doc-name">${doc.name}</div></div>
-      </div>`;
-    } else {
-      return`<div class="doc-item empty">
-        <span class="doc-icon">—</span>
-        <div class="doc-info"><div class="doc-lang">${doc.lang}</div><div class="doc-name">파일 없음</div></div>
-      </div>`;
+  // 보고서 파일 - 언어별로 복수 파일 처리
+  function makeDocItems(lang, namesStr, urlsStr) {
+    const names = (namesStr||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    const urls  = (urlsStr||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    if(!names.length && !urls.length) {
+      return `<div class="doc-item empty"><span class="doc-icon">—</span><div class="doc-info"><div class="doc-lang">${lang}</div><div class="doc-name">파일 없음</div></div></div>`;
     }
-  }).join('');
+    const count = Math.max(names.length, urls.length);
+    let html = '';
+    for(let i=0; i<count; i++){
+      const name = names[i]||'파일 보기';
+      const url  = urls[i]||'';
+      const icon = name.match(/\.pptx?$/i)?'📊':name.match(/\.xlsx?$/i)?'📗':'📄';
+      const label = count>1 ? `${lang} 보고서 ${i+1}` : `${lang} 보고서`;
+      if(url){
+        html+=`<a class="doc-item" href="${url}" target="_blank" rel="noopener">
+          <span class="doc-icon">${icon}</span>
+          <div class="doc-info"><div class="doc-lang">${label}</div><div class="doc-name">${name}</div></div>
+          <span class="doc-arrow">↗</span>
+        </a>`;
+      } else {
+        html+=`<div class="doc-item" style="cursor:default">
+          <span class="doc-icon">${icon}</span>
+          <div class="doc-info"><div class="doc-lang">${label}</div><div class="doc-name">${name}</div></div>
+        </div>`;
+      }
+    }
+    return html;
+  }
+  document.getElementById('modal-docs').innerHTML=
+    makeDocItems('국문', d.file_ko, d.url_ko)+
+    makeDocItems('영문', d.file_en, d.url_en)+
+    makeDocItems('일어', d.file_jp, d.url_jp)+
+    makeDocItems('중문', '', d.url_cn);
 
   document.getElementById('modal').classList.add('open');
 }
