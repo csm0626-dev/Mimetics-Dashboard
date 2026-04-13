@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mimetics 임상시험 대시보드</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--border:rgba(99,120,180,0.18);--accent:#4f8ef7;--accent2:#38d9a9;--accent3:#f7a94f;--text:#e8edf5;--text2:#8a99b8;--text3:#5a6a8a;--danger:#f75f5f;--radius:12px;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -25,12 +26,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .login-notice span{color:var(--accent);}
 .access-denied{display:none;margin-top:16px;padding:12px 16px;background:rgba(247,95,95,0.1);border:1px solid rgba(247,95,95,0.3);border-radius:8px;font-size:12px;color:var(--danger);}
 .access-denied.show{display:block;}
-
-/* SETUP BANNER */
-#setup-banner{display:none;background:rgba(247,169,79,0.08);border-bottom:1px solid rgba(247,169,79,0.2);padding:10px 32px;font-size:12px;color:var(--accent3);align-items:center;gap:16px;flex-wrap:wrap;}
-#setup-banner.show{display:flex;}
-.setup-close{margin-left:auto;cursor:pointer;opacity:0.6;font-size:16px;}
-.setup-link{color:var(--accent);text-decoration:underline;cursor:pointer;}
 
 /* HEADER */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
@@ -76,9 +71,9 @@ main{padding:28px 32px;max-width:1440px;margin:0 auto;}
 .card-body{padding:20px;}
 .bar-chart{display:flex;flex-direction:column;gap:10px;}
 .bar-row{display:flex;align-items:center;gap:10px;}
-.bar-label{font-size:11px;color:var(--text2);width:80px;text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bar-track{flex:1;height:20px;background:var(--surface2);border-radius:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-family:'DM Mono',monospace;font-weight:500;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);min-width:28px;}
+.bar-label{font-size:11px;color:var(--text2);width:90px;text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);min-width:28px;}
 .bar-fill.blue{background:rgba(79,142,247,0.3);color:var(--accent);border:1px solid rgba(79,142,247,0.3);}
 .bar-fill.green{background:rgba(56,217,169,0.2);color:var(--accent2);border:1px solid rgba(56,217,169,0.25);}
 .bar-fill.amber{background:rgba(247,169,79,0.2);color:var(--accent3);border:1px solid rgba(247,169,79,0.25);}
@@ -107,7 +102,7 @@ select:focus{border-color:var(--accent);}
 /* TABLE */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px;}
 .table-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;min-width:900px;}
+table{width:100%;border-collapse:collapse;min-width:1000px;}
 thead th{background:var(--surface2);padding:11px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
 thead th:hover{color:var(--text);}
 thead th.sort-asc::after{content:' ↑';color:var(--accent);}
@@ -116,7 +111,7 @@ tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:backgro
 tbody tr:hover{background:var(--surface2);}
 tbody tr:last-child{border-bottom:none;}
 td{padding:10px 14px;vertical-align:middle;}
-td.no{font-family:'DM Mono',monospace;color:var(--text3);font-size:11px;}
+td.no{font-family:'DM Mono',monospace;color:var(--text3);font-size:11px;width:40px;}
 td.code{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:500;white-space:nowrap;}
 .badge-type{background:rgba(79,142,247,0.15);color:#7eb3ff;border:1px solid rgba(79,142,247,0.2);}
@@ -125,49 +120,43 @@ td.code{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
 .badge-ctrl{background:rgba(167,139,250,0.12);color:#a78bfa;border:1px solid rgba(167,139,250,0.2);}
 .badge-no{background:rgba(90,106,138,0.15);color:var(--text3);border:1px solid var(--border);}
 .company-pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--text);}
-.name-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;display:block;}
+.name-cell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;display:block;}
 .eval-cell{display:block;font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
-.download-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.25);color:var(--accent);cursor:pointer;transition:all 0.2s;font-family:inherit;}
-.download-btn:hover{background:rgba(79,142,247,0.2);}
-.download-btn.no-file{background:transparent;border-color:var(--border);color:var(--text3);}
+.file-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:500;border:none;cursor:pointer;transition:all 0.2s;font-family:inherit;text-decoration:none;}
+.file-btn.has{background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.25);color:var(--accent);}
+.file-btn.has:hover{background:rgba(79,142,247,0.2);}
+.file-btn.none{background:transparent;border:1px solid var(--border);color:var(--text3);cursor:default;}
+.files-cell{display:flex;flex-wrap:wrap;gap:4px;min-width:160px;}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;backdrop-filter:blur(4px);align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:560px;max-height:80vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:modalIn 0.2s ease;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:600px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:modalIn 0.2s ease;}
 @keyframes modalIn{from{transform:scale(0.95) translateY(8px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
 .modal-header{padding:24px 24px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:4px;line-height:1.4;}
 .modal-code{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);}
 .modal-close{background:var(--surface2);border:1px solid var(--border);width:28px;height:28px;border-radius:6px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .modal-close:hover{color:var(--text);}
 .modal-body{padding:20px 24px 24px;}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
-.info-key{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;}
-.info-val{font-size:13px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.info-item{padding:12px;background:var(--surface2);border-radius:8px;}
+.info-key{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:5px;}
+.info-val{font-size:13px;line-height:1.4;}
 .info-val-mono{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2);}
 .eval-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.eval-tag{padding:3px 10px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text2);}
+.eval-tag{padding:4px 12px;border-radius:100px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text2);}
 .modal-section{margin-top:18px;padding-top:18px;border-top:1px solid var(--border);}
 .modal-section-title{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:12px;}
-.file-list{display:flex;flex-direction:column;gap:8px;}
-.file-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color 0.2s;}
-.file-item:hover{border-color:var(--accent);}
-.file-icon{font-size:18px;}
-.file-name{flex:1;font-size:12px;}
-.file-type{font-size:10px;color:var(--text3);}
-.file-dl{font-size:12px;color:var(--accent);margin-left:auto;}
-.no-file-msg{font-size:12px;color:var(--text3);text-align:center;padding:20px;}
-.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;color:var(--text2);font-size:12px;display:block;margin-top:12px;}
-.upload-zone:hover{border-color:var(--accent);color:var(--accent);}
-.upload-zone input{display:none;}
-
-/* OAUTH GUIDE */
-.guide-step{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--border);}
-.guide-step:last-child{border-bottom:none;}
-.step-label{font-size:12px;font-weight:600;color:var(--accent);}
-.step-desc{font-size:12px;color:var(--text2);line-height:1.6;}
-code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);display:inline-block;margin-top:4px;}
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;text-decoration:none;transition:border-color 0.2s;}
+.doc-item:hover{border-color:var(--accent);}
+.doc-item.empty{opacity:0.4;cursor:default;pointer-events:none;}
+.doc-icon{font-size:18px;flex-shrink:0;}
+.doc-info{flex:1;overflow:hidden;}
+.doc-lang{font-size:11px;font-weight:600;color:var(--text);}
+.doc-name{font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
+.doc-arrow{color:var(--accent);font-size:12px;flex-shrink:0;}
 
 /* PAGINATION */
 .pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border);}
@@ -182,11 +171,9 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
 .empty{text-align:center;padding:40px;color:var(--text3);}
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.section-grid{grid-template-columns:1fr;}}
 </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen" class="show">
   <div class="login-card">
     <div class="login-logo">🧪</div>
@@ -196,21 +183,11 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
       <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
       Google 계정으로 로그인
     </button>
-    <div class="access-denied" id="access-denied">⛔ 접근 권한이 없는 계정입니다. 관리자에게 문의하세요.</div>
+    <div class="access-denied" id="access-denied">⛔ 접근 권한이 없는 계정입니다.</div>
     <div class="login-notice">허용된 <span>@mimetics.co.kr</span> 계정만 접근 가능합니다</div>
   </div>
 </div>
 
-<!-- SETUP BANNER -->
-<div id="setup-banner">
-  <span>⚠ 설정 필요:</span>
-  <span>① Google Sheets → 파일 → 공유 및 내보내기 → <strong>웹에 게시</strong> → CSV 선택 후 게시</span>
-  <span style="opacity:0.4">|</span>
-  <span>② <span class="setup-link" onclick="document.getElementById('oauth-modal').classList.add('open')">Google OAuth Client ID 설정</span> (실제 로그인 연동)</span>
-  <span class="setup-close" onclick="this.parentElement.classList.remove('show')">✕</span>
-</div>
-
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-icon">🧪</div>
@@ -227,7 +204,6 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
 </header>
 
 <main>
-  <!-- KPI 4개: 전체·완료·진행중·협업기업 수 -->
   <div class="kpi-grid">
     <div class="kpi-card blue"><div class="kpi-label">전체 임상</div><div class="kpi-value blue" id="kpi-total">—</div><div class="kpi-sub">등록된 임상 건수</div></div>
     <div class="kpi-card green"><div class="kpi-label">완료</div><div class="kpi-value green" id="kpi-done">—</div><div class="kpi-sub">진행상태 완료</div></div>
@@ -235,13 +211,11 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
     <div class="kpi-card teal"><div class="kpi-label">협업기업</div><div class="kpi-value teal" id="kpi-companies">—</div><div class="kpi-sub">파트너 기업 수</div></div>
   </div>
 
-  <!-- CHARTS -->
   <div class="section-grid">
     <div class="card"><div class="card-header"><span class="card-title">협업기업별 임상 현황</span></div><div class="card-body" id="chart-company"><div class="loading"><div class="spinner"></div></div></div></div>
     <div class="card"><div class="card-header"><span class="card-title">제품유형 분포</span></div><div class="card-body" id="chart-type"><div class="loading"><div class="spinner"></div></div></div></div>
   </div>
 
-  <!-- CONTROLS -->
   <div class="controls">
     <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="search" placeholder="임상명, 임상번호, 협업기업 검색..."></div>
     <select id="filter-status"><option value="">전체 상태</option><option value="완료">완료</option><option value="진행">진행 중</option></select>
@@ -249,7 +223,6 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
     <select id="filter-type"><option value="">전체 유형</option></select>
   </div>
 
-  <!-- TABLE -->
   <div class="table-card">
     <div class="table-wrap">
       <table>
@@ -285,31 +258,13 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
     </div>
     <div class="modal-body">
       <div class="info-grid" id="modal-info"></div>
-      <div class="modal-section"><div class="modal-section-title">평가항목</div><div class="eval-tags" id="modal-evals"></div></div>
       <div class="modal-section">
-        <div class="modal-section-title">첨부 보고서 파일</div>
-        <div class="file-list" id="modal-files"></div>
-        <label class="upload-zone"><input type="file" id="file-upload" multiple accept=".pdf,.xlsx,.pptx,.docx" onchange="handleFileUpload(event)">📎 파일 추가 (PDF, Excel, PPT, Word)</label>
+        <div class="modal-section-title">평가항목</div>
+        <div class="eval-tags" id="modal-evals"></div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- OAUTH GUIDE MODAL -->
-<div class="modal-overlay" id="oauth-modal" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="modal" style="max-width:460px">
-    <div class="modal-header">
-      <div><div class="modal-title">Google 로그인 연동 설정</div><div class="modal-code">실제 운영을 위한 OAuth 설정 가이드</div></div>
-      <button class="modal-close" onclick="document.getElementById('oauth-modal').classList.remove('open')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="guide-step"><div class="step-label">Step 1. Google Cloud Console 접속</div><div class="step-desc"><code>console.cloud.google.com</code> 접속 → 새 프로젝트 생성</div></div>
-      <div class="guide-step"><div class="step-label">Step 2. OAuth 동의 화면 설정</div><div class="step-desc">APIs &amp; Services → OAuth 동의 화면 → 외부 선택 → 앱 정보 입력</div></div>
-      <div class="guide-step"><div class="step-label">Step 3. Client ID 발급</div><div class="step-desc">사용자 인증정보 → OAuth 2.0 클라이언트 ID 생성<br>유형: 웹 애플리케이션 → 대시보드 배포 URL을 리디렉션 URI에 추가</div></div>
-      <div class="guide-step"><div class="step-label">Step 4. 이 파일 수정</div><div class="step-desc">아래 두 줄을 실제 값으로 교체하세요<code>const GOOGLE_CLIENT_ID = '발급받은 Client ID';</code><code>const ALLOWED_DOMAIN = 'mimetics.co.kr';</code></div></div>
-      <div class="guide-step"><div class="step-label">Step 5. 시트 웹에 게시</div><div class="step-desc">Google Sheets → 파일 → 공유 및 내보내기 → 웹에 게시 → 전체 문서, CSV → 게시</div></div>
-      <div style="margin-top:16px;padding:12px;background:rgba(56,217,169,0.08);border:1px solid rgba(56,217,169,0.2);border-radius:8px;font-size:12px;color:var(--accent2);line-height:1.6;">
-        ✓ 설정 완료 후: Google 계정 선택 → @mimetics.co.kr 이메일 자동 검증 → 대시보드 접근
+      <div class="modal-section">
+        <div class="modal-section-title">결과보고서 파일</div>
+        <div class="doc-grid" id="modal-docs"></div>
       </div>
     </div>
   </div>
@@ -317,58 +272,48 @@ code{background:var(--surface2);padding:3px 8px;border-radius:4px;font-family:'D
 
 <script>
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ⚙ 여기만 수정하세요
+// 설정
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const GOOGLE_CLIENT_ID = '96435058784-qiqorkmshlgsu2qg43qfc7cu49k9oo8j.apps.googleusercontent.com'; // Google Cloud Console에서 발급
-const ALLOWED_DOMAIN   = 'mimetics.co.kr';   // 이 도메인 전체 허용
-const ALLOWED_EMAILS   = [];                  // 추가 허용 이메일 (다른 도메인 직원 등)
-const SHEET_ID         = '1PHKkS5nSiQQNe8zZ4HYgSZCo5oXc5dCF8NUt7vbB1dw';
+const GOOGLE_CLIENT_ID = '96435058784-qiqorkmshlgsu2qg43qfc7cu49k9oo8j.apps.googleusercontent.com';
+const ALLOWED_DOMAIN = 'mimetics.co.kr';
+const ALLOWED_EMAILS = [];
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTm3U_1mjTHqWgaci7GGRyQ79wwmTmIxypwASMmRq2e7gSkjj_VifXKluKY-JZSr8NsE8Dpt4LvQhNe/pub?output=csv';
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const DEMO_MODE = false;
 
-const DEMO_MODE = GOOGLE_CLIENT_ID === 'YOUR_CLIENT_ID.apps.googleusercontent.com';
 let currentUser=null, allData=[], filteredData=[], sortCol='no', sortDir='asc', currentPage=1;
-const PAGE_SIZE=15;
-let selectedRow=null;
-let fileStore=JSON.parse(localStorage.getItem('mim_files')||'{}');
+const PAGE_SIZE=20;
 
-/* ── AUTH ── */
+/* ── 인증 ── */
 function startGoogleLogin(){
   if(DEMO_MODE){
-    const email=prompt('데모 모드\n접속할 이메일 입력 (실제 운영 시 Google 로그인으로 대체됩니다)','test@mimetics.co.kr');
+    const email=prompt('테스트 이메일 입력','test@mimetics.co.kr');
     if(!email)return;
     handleLoginSuccess({email,name:email.split('@')[0],picture:null});
     return;
   }
-  // 실제 OAuth — Google Identity Services 라이브러리 필요
-  // <script src="https://accounts.google.com/gsi/client"> 추가 후 활성화
   google.accounts.oauth2.initTokenClient({
-    client_id:GOOGLE_CLIENT_ID, scope:'email profile',
-    callback:(r)=>{ if(r.access_token) fetchGoogleProfile(r.access_token); }
+    client_id:GOOGLE_CLIENT_ID,scope:'email profile',
+    callback:(r)=>{if(r.access_token)fetchGoogleProfile(r.access_token);}
   }).requestAccessToken();
 }
-
 async function fetchGoogleProfile(token){
   const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:`Bearer ${token}`}});
   const p=await res.json();
   handleLoginSuccess({email:p.email,name:p.name,picture:p.picture});
 }
-
 function handleLoginSuccess(user){
   const ok=ALLOWED_EMAILS.includes(user.email)||(ALLOWED_DOMAIN&&user.email.endsWith('@'+ALLOWED_DOMAIN));
   if(!ok&&(ALLOWED_EMAILS.length>0||ALLOWED_DOMAIN)){
-    document.getElementById('access-denied').classList.add('show'); return;
+    document.getElementById('access-denied').classList.add('show');return;
   }
   currentUser=user;
   document.getElementById('login-screen').classList.remove('show');
   const av=document.getElementById('user-avatar');
-  if(user.picture) av.innerHTML=`<img src="${user.picture}" style="width:26px;height:26px;border-radius:50%;object-fit:cover">`;
+  if(user.picture)av.innerHTML=`<img src="${user.picture}" style="width:26px;height:26px;border-radius:50%;object-fit:cover">`;
   else av.textContent=user.name.charAt(0).toUpperCase();
   document.getElementById('user-name').textContent=user.name;
-  if(DEMO_MODE) document.getElementById('setup-banner').classList.add('show');
   loadData();
 }
-
 function logout(){
   if(!confirm('로그아웃하시겠습니까?'))return;
   currentUser=null;
@@ -376,52 +321,66 @@ function logout(){
   document.getElementById('access-denied').classList.remove('show');
 }
 
-/* ── DATA ── */
+/* ── CSV 파싱 (쉼표+따옴표 정확히 처리) ── */
+function parseCSVLine(line){
+  const result=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){
+      if(inQ&&line[i+1]==='"'){cur+='"';i++;}
+      else inQ=!inQ;
+    } else if(ch===','&&!inQ){result.push(cur.trim());cur='';}
+    else cur+=ch;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
 async function loadData(){
   document.getElementById('sync-label').textContent='동기화 중...';
   try{
-    const r=await fetch(CSV_URL); if(!r.ok)throw new Error();
-    allData=parseCSV(await r.text());
+    const r=await fetch(CSV_URL);
+    if(!r.ok)throw new Error();
+    const text=await r.text();
+    const lines=text.trim().split('\n');
+    // 헤더: No.,제품 유형,임상번호,임상명,평가항목,시험 기간,사용 제품,협업기업,진행상태,대조군 여부,시험자 수,임상업체,논문화 진행 단계,논문 파일,,국문,번역본(영문),번역본(일어),국문_URL,영문_URL,일어_URL,중문_URL
+    // 인덱스: 0        1         2       3     4       5         6        7       8        9           10        11      12               13        14  15    16            17            18       19      20      21
+    allData=[];
+    for(let i=1;i<lines.length;i++){
+      const c=parseCSVLine(lines[i]);
+      const no=c[0]?.replace(/"/g,'').trim();
+      if(!no||isNaN(no))continue; // No. 숫자인 행만
+      allData.push({
+        no:no,
+        type:c[1]||'',
+        code:c[2]||'',
+        name:c[3]||'',
+        eval:c[4]||'',
+        period:c[5]||'',
+        product:c[6]||'',
+        company:c[7]||'',
+        status:c[8]||'',
+        ctrl:c[9]||'',
+        subjects:c[10]||'',
+        agency:c[11]||'',
+        pubStage:c[12]||'',
+        file_ko:c[15]||'',   // 국문 파일명
+        file_en:c[16]||'',   // 영문 파일명
+        file_jp:c[17]||'',   // 일어 파일명
+        url_ko:c[18]||'',    // 국문 URL
+        url_en:c[19]||'',    // 영문 URL
+        url_jp:c[20]||'',    // 일어 URL
+        url_cn:c[21]||'',    // 중문 URL
+      });
+    }
     document.getElementById('sync-label').textContent=`동기화 완료 ${new Date().toLocaleTimeString('ko-KR')}`;
     document.getElementById('sync-dot').style.background='var(--accent2)';
-  }catch{
-    allData=getSampleData();
-    document.getElementById('sync-label').textContent='샘플 데이터 (시트 미연동)';
-    document.getElementById('sync-dot').style.background='var(--accent3)';
+  }catch(e){
+    document.getElementById('sync-label').textContent='연결 오류';
+    document.getElementById('sync-dot').style.background='var(--danger)';
   }
-  updateKPIs(); updateCharts(); updateFilters(); applyFilters();
+  updateKPIs();updateCharts();updateFilters();applyFilters();
 }
-
-function parseCSV(text){
-  const lines=text.trim().split('\n'),res=[];
-  for(let i=1;i<lines.length;i++){
-    const c=splitCSV(lines[i]);
-    if(!c[0]?.trim())continue;
-    res.push({no:c[0]?.trim()||'',type:c[1]?.trim()||'',code:c[2]?.trim()||'',name:c[3]?.trim()||'',eval:c[4]?.trim()||'',period:c[5]?.trim()||'',product:c[6]?.trim()||'',company:c[7]?.trim()||'',status:c[8]?.trim()||'',ctrl:c[9]?.trim()||'',subjects:c[10]?.trim()||'',agency:c[11]?.trim()||''});
-  }
-  return res;
-}
-function splitCSV(line){const r=[];let c='',q=false;for(let i=0;i<line.length;i++){if(line[i]==='"')q=!q;else if(line[i]===','&&!q){r.push(c);c='';}else c+=line[i];}r.push(c);return r;}
-
-function getSampleData(){return[
-  {no:'1',type:'실리콘패치',code:'HM-0032-21',name:'문어 흡반 구조 모사 피부 패치',eval:'피부접합포에 의한 일차자극 시험',period:'2024.11.05 ~ 2024.11.07',product:'',company:'-',status:'완료',ctrl:'-',subjects:'34명',agency:'휴먼피부과'},
-  {no:'2',type:'실리콘패치',code:'HE-R24-240219-1',name:'문어 흡반 구조모사 피부 패치 외 1종',eval:'피부 흡수도',period:'2024.02.19 ~ 2024.03.25',product:'성분에디터 그린토마토',company:'-',status:'완료',ctrl:'WO패치',subjects:'20명',agency:'휴먼피부과'},
-  {no:'3',type:'실리콘패치',code:'HE-R24-240219-2',name:'문어 흡반 구조 모사 피부 패치 외 2종',eval:'피부 흡수도',period:'2024.02.19 ~ 2024.03.25',product:'성분에디터 그린토마토',company:'-',status:'완료',ctrl:'WO패치',subjects:'5명',agency:'휴먼피부과'},
-  {no:'4',type:'실리콘패치',code:'HM-R25-0975',name:'젤 + 음압 패치',eval:'경피수분손실량 개선',period:'2025.12.01 ~ 2025.12.15',product:'젤 조성물',company:'H&S 바이오랩',status:'완료',ctrl:'-',subjects:'23명',agency:'휴먼피부과'},
-  {no:'5',type:'실리콘패치',code:'HM-R25-0996',name:'미선 크리스탈 젤리 아이&페이스 + 음압패치',eval:'2주 사용 후 피부 이상반응 평가',period:'2025.11.28 ~ 2025.12.12',product:'미선 크리스탈 젤리',company:'LG생활건강',status:'완료',ctrl:'-',subjects:'22명',agency:'휴먼피부과'},
-  {no:'6',type:'실리콘패치',code:'PNK-25D03-RS1R',name:'미선 크리스탈 젤리 단독 vs 음압 패치 인체적용시험',eval:'피부 흡수도\n흡수속도\n흡수율',period:'2025.12.03 ~ 2025.12.09',product:'미선 크리스탈 젤리',company:'LG생활건강',status:'완료',ctrl:'WO패치',subjects:'20명',agency:'피엔케이'},
-  {no:'7',type:'실리콘패치',code:'HM-R25-0934',name:'임상시험용 앰플 + 실리콘 음압 패치',eval:'피부 눈가 주름 개선\n피부 탄력 개선\n피부 보습 개선',period:'2025.11.14 ~ 2025.11.28',product:'임상시험용 앰플',company:'효성',status:'완료',ctrl:'WO패치',subjects:'23명',agency:'휴먼피부과'},
-  {no:'8',type:'실리콘패치',code:'HD-R24-0043',name:'CNP 더마앤서 액티브 부스트 앰플 +실리콘 음압 패치',eval:'피부 주름 개선\n피부 탄력 개선\n색소 침착 개선',period:'2025.01.07 ~ 2025.02.04',product:'CNP 더마앤서 앰플',company:'LG생활건강/CNP',status:'완료',ctrl:'WO패치',subjects:'10명',agency:'휴먼피부과'},
-  {no:'9',type:'실리콘패치',code:'HM-R25-0666',name:'메디톡스 뉴라덤 코어타임 앰플 외 1종',eval:'피부 주름 개선\n피부 탄력 개선\n색소 침착 개선',period:'2025.08.19 ~ 2025.09.16',product:'메디톡스 뉴라덤 앰플',company:'메디톡스',status:'완료',ctrl:'WO패치',subjects:'20명',agency:'휴먼피부과'},
-  {no:'10',type:'실리콘패치',code:'HM-0086-02',name:'로토제약 CliniScience Eye perfect shot Cream',eval:'저자극테스트',period:'2026.02.10 ~ 2026.02.12',product:'로토 CliniScience Eye Cream',company:'로토제약',status:'완료',ctrl:'W/O패치',subjects:'33명',agency:'휴먼피부과'},
-  {no:'11',type:'실리콘패치',code:'HM-0086-01',name:'로토제약 StemScience Eye Cream',eval:'저자극테스트',period:'2026.02.10 ~ 2026.02.12',product:'로토 StemScience Eye Cream',company:'로토제약',status:'완료',ctrl:'W/O패치',subjects:'33명',agency:'휴먼피부과'},
-  {no:'12',type:'실리콘패치',code:'HM-R25-1130',name:'로토제약 CliniScience Eye perfect shot Cream',eval:'눈가 주름개선\n피부 보습 개선\n눈밑 다크서클 개선',period:'2026.01.27 ~ 2026.02.24',product:'로토 CliniScience Eye Cream',company:'로토제약',status:'완료',ctrl:'W/O패치',subjects:'21명',agency:'휴먼피부과'},
-  {no:'13',type:'실리콘패치',code:'HM-R25-1129',name:'로토제약 StemScience Eye Cream',eval:'눈가 주름개선\n피부 보습 개선\n눈밑 다크서클 개선',period:'2026.01.27 ~ 2026.02.24',product:'로토 StemScience Eye Cream',company:'로토제약',status:'완료',ctrl:'W/O패치',subjects:'21명',agency:'휴먼피부과'},
-  {no:'14',type:'실리콘패치',code:'HM-R25-1123',name:'효성 지에프씨셀 엑소 바이탈 9403 파우더 외 3품',eval:'눈가 주름 개선\n피부 탄력 개선\n피부 보습 개선',period:'2026.01.12 ~ 2026.02.09',product:'지에프씨셀 파우더',company:'효성',status:'완료',ctrl:'W/O패치',subjects:'23명',agency:'휴먼피부과'},
-  {no:'15',type:'실리콘패치',code:'HM-R25-1124',name:'효성 지에프씨셀 엑소 바이탈 9403 파우더 외 3품',eval:'눈가 주름 개선\n피부 탄력 개선\n피부 보습 개선',period:'2026.01.13 ~ 2026.02.10',product:'지에프씨셀 파우더',company:'효성',status:'완료',ctrl:'W/O패치\n벨로즈 MTS',subjects:'24명',agency:'휴먼피부과'},
-  {no:'16',type:'실리콘패치',code:'HM-R26-0077',name:'엑소슈티컵 엑소좀 앰플',eval:'눈가 주름 개선\n피부 탄력 개선\n피부 보습 개선',period:'2026.02.20 ~ 2026.03.06',product:'Exo H-Serum',company:'엑소슈티컵',status:'완료',ctrl:'W/O패치',subjects:'20명',agency:'휴먼피부과'},
-  {no:'17',type:'하이드로젤',code:'HR-P25-0036',name:'옥타겔 마스크',eval:'피부 흡수도',period:'2025.12.10',product:'옥타겔 마스크',company:'뷰티맥스',status:'완료',ctrl:'하이드로겔 마스크',subjects:'3명',agency:'휴먼피부과'},
-];}
 
 /* ── KPI ── */
 function updateKPIs(){
@@ -429,34 +388,38 @@ function updateKPIs(){
   const done=allData.filter(d=>d.status.includes('완료')).length;
   const inprog=total-done;
   const cos=new Set(allData.map(d=>d.company).filter(c=>c&&c!=='-')).size;
-  animateCount('kpi-total',total); animateCount('kpi-done',done);
-  animateCount('kpi-inprog',inprog); animateCount('kpi-companies',cos);
+  animateCount('kpi-total',total);animateCount('kpi-done',done);
+  animateCount('kpi-inprog',inprog);animateCount('kpi-companies',cos);
 }
 function animateCount(id,target){
-  const el=document.getElementById(id); let cur=0;
+  const el=document.getElementById(id);let cur=0;
   const step=Math.ceil(target/30);
   const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur;if(cur>=target)clearInterval(t);},30);
 }
 
-/* ── CHARTS ── */
+/* ── 차트 ── */
 function updateCharts(){
   const cc={};
   allData.forEach(d=>{if(d.company&&d.company!=='-')cc[d.company]=(cc[d.company]||0)+1;});
   const cs=Object.entries(cc).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const mx=Math.max(...cs.map(c=>c[1]));
+  const mx=Math.max(...cs.map(c=>c[1]),1);
   const cols=['blue','green','amber','purple','teal','blue','green','amber'];
-  document.getElementById('chart-company').innerHTML=`<div class="bar-chart">${cs.map(([k,v],i)=>`<div class="bar-row"><div class="bar-label" title="${k}">${k}</div><div class="bar-track"><div class="bar-fill ${cols[i]}" style="width:${Math.round(v/mx*100)}%">${v}</div></div></div>`).join('')}</div>`;
+  document.getElementById('chart-company').innerHTML=`<div class="bar-chart">${
+    cs.map(([k,v],i)=>`<div class="bar-row"><div class="bar-label" title="${k}">${k}</div><div class="bar-track"><div class="bar-fill ${cols[i]}" style="width:${Math.round(v/mx*100)}%">${v}</div></div></div>`).join('')
+  }</div>`;
 
-  const tc={};allData.forEach(d=>{if(d.type)tc[d.type]=(tc[d.type]||0)+1;});
-  const tot=allData.length,te=Object.entries(tc).sort((a,b)=>b[1]-a[1]);
+  const tc={};
+  allData.forEach(d=>{if(d.type)tc[d.type]=(tc[d.type]||0)+1;});
+  const tot=allData.length||1;
+  const te=Object.entries(tc).sort((a,b)=>b[1]-a[1]);
   const pal=['#4f8ef7','#38d9a9','#f7a94f','#a78bfa','#34d1bf'];
   const R=60,cx=70,cy=70,sw=22,ci=2*Math.PI*R;
   let off=0;
-  const sl=te.map(([k,v],i)=>{const p=v/tot,d=p*ci;const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${pal[i]}" stroke-width="${sw}" stroke-dasharray="${d} ${ci-d}" stroke-dashoffset="${-off*ci+ci/4}"/>`;off+=p;return s;}).join('');
-  document.getElementById('chart-type').innerHTML=`<div class="donut-wrap"><div class="donut-svg-wrap"><svg width="140" height="140" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="none" stroke="var(--surface2)" stroke-width="22"/>${sl}</svg><div class="donut-center"><div class="donut-center-val">${tot}</div><div class="donut-center-label">전체</div></div></div><div class="donut-legend">${te.map(([k,v],i)=>`<div class="legend-item"><div class="legend-dot" style="background:${pal[i]}"></div><div class="legend-key">${k}</div><div class="legend-val" style="color:${pal[i]}">${v}</div></div>`).join('')}</div></div>`;
+  const sl=te.map(([k,v],i)=>{const p=v/tot,d=p*ci;const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${pal[i%5]}" stroke-width="${sw}" stroke-dasharray="${d} ${ci-d}" stroke-dashoffset="${-(off*ci)+ci/4}"/>`;off+=p;return s;}).join('');
+  document.getElementById('chart-type').innerHTML=`<div class="donut-wrap"><div class="donut-svg-wrap"><svg width="140" height="140" viewBox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="none" stroke="var(--surface2)" stroke-width="22"/>${sl}</svg><div class="donut-center"><div class="donut-center-val">${tot}</div><div class="donut-center-label">전체</div></div></div><div class="donut-legend">${te.map(([k,v],i)=>`<div class="legend-item"><div class="legend-dot" style="background:${pal[i%5]}"></div><div class="legend-key">${k}</div><div class="legend-val" style="color:${pal[i%5]}">${v}</div></div>`).join('')}</div></div>`;
 }
 
-/* ── FILTER/SORT/TABLE ── */
+/* ── 필터/정렬/테이블 ── */
 function updateFilters(){
   const cos=[...new Set(allData.map(d=>d.company).filter(c=>c&&c!=='-'))].sort();
   document.getElementById('filter-company').innerHTML='<option value="">전체 기업</option>'+cos.map(c=>`<option value="${c}">${c}</option>`).join('');
@@ -468,8 +431,10 @@ function applyFilters(){
   const st=document.getElementById('filter-status').value;
   const co=document.getElementById('filter-company').value;
   const ty=document.getElementById('filter-type').value;
-  filteredData=allData.filter(d=>(!q||d.name.toLowerCase().includes(q)||d.code.toLowerCase().includes(q)||d.company.toLowerCase().includes(q))&&(!st||d.status.includes(st))&&(!co||d.company===co)&&(!ty||d.type===ty));
-  sortData(); currentPage=1; renderTable();
+  filteredData=allData.filter(d=>
+    (!q||d.name.toLowerCase().includes(q)||d.code.toLowerCase().includes(q)||d.company.toLowerCase().includes(q))
+    &&(!st||d.status.includes(st))&&(!co||d.company===co)&&(!ty||d.type===ty));
+  sortData();currentPage=1;renderTable();
 }
 ['search','filter-status','filter-company','filter-type'].forEach(id=>{
   document.getElementById(id).addEventListener('input',applyFilters);
@@ -478,7 +443,7 @@ function applyFilters(){
 function sortBy(col){
   if(sortCol===col)sortDir=sortDir==='asc'?'desc':'asc';else{sortCol=col;sortDir='asc';}
   document.querySelectorAll('thead th').forEach(th=>{th.classList.remove('sort-asc','sort-desc');if(th.dataset.col===col)th.classList.add(`sort-${sortDir}`);});
-  sortData(); renderTable();
+  sortData();renderTable();
 }
 function sortData(){
   filteredData.sort((a,b)=>{
@@ -487,14 +452,22 @@ function sortData(){
     return sortDir==='asc'?va.localeCompare(vb,'ko'):vb.localeCompare(va,'ko');
   });
 }
+
+function hasFiles(d){return d.file_ko||d.file_en||d.file_jp||d.url_ko||d.url_en||d.url_jp||d.url_cn;}
+
 function renderTable(){
   const start=(currentPage-1)*PAGE_SIZE;
   const page=filteredData.slice(start,start+PAGE_SIZE);
   const tbody=document.getElementById('table-body');
   if(!page.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty">검색 결과가 없습니다</div></td></tr>';return;}
   tbody.innerHTML=page.map(d=>{
-    const hf=fileStore[d.code]&&fileStore[d.code].length>0;
     const el=d.eval.split('\n').filter(Boolean);
+    const hf=hasFiles(d);
+    // 보고서 버튼들
+    let fileBtns='';
+    if(d.file_ko) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 국문</span>`;
+    if(d.file_en) fileBtns+=`<span class="file-btn has" onclick="event.stopPropagation();openModal('${d.code}')">📄 영문</span>`;
+    if(!hf) fileBtns=`<span class="file-btn none">없음</span>`;
     return`<tr onclick="openModal('${d.code}')">
       <td class="no">${d.no}</td>
       <td><span class="badge badge-type">${d.type}</span></td>
@@ -506,59 +479,64 @@ function renderTable(){
       <td><span class="badge ${d.status.includes('완료')?'badge-done':'badge-inprog'}">${d.status}</span></td>
       <td>${d.ctrl&&d.ctrl!=='-'?`<span class="badge badge-ctrl" style="font-size:10px">${d.ctrl.split('\n')[0]}</span>`:`<span class="badge badge-no">없음</span>`}</td>
       <td style="font-family:'DM Mono',monospace;font-size:12px">${d.subjects}</td>
-      <td><button class="download-btn ${hf?'':'no-file'}" onclick="event.stopPropagation();openModal('${d.code}')">${hf?'📄 보기':'+ 추가'}</button></td>
+      <td><div class="files-cell">${fileBtns}</div></td>
     </tr>`;
   }).join('');
   const tot=filteredData.length,tp=Math.ceil(tot/PAGE_SIZE);
   document.getElementById('page-info').textContent=`${Math.min(start+1,tot)}–${Math.min(start+PAGE_SIZE,tot)} / ${tot}건`;
   const pb=document.getElementById('page-btns');
-  pb.innerHTML=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>&#8249;</button>`
+  pb.innerHTML=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`
     +Array.from({length:Math.min(tp,5)},(_,i)=>i+1).map(p=>`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`).join('')
-    +`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=tp?'disabled':''}>&#8250;</button>`;
+    +`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=tp?'disabled':''}>›</button>`;
 }
 function goPage(p){const tp=Math.ceil(filteredData.length/PAGE_SIZE);if(p<1||p>tp)return;currentPage=p;renderTable();}
 
-/* ── MODAL ── */
+/* ── 모달 ── */
 function openModal(code){
   const d=allData.find(r=>r.code===code);if(!d)return;
-  selectedRow=d;
   document.getElementById('modal-title').textContent=d.name;
   document.getElementById('modal-code').textContent=d.code;
   document.getElementById('modal-info').innerHTML=`
-    <div><div class="info-key">제품유형</div><div class="info-val">${d.type}</div></div>
-    <div><div class="info-key">협업기업</div><div class="info-val">${d.company||'-'}</div></div>
-    <div><div class="info-key">시험기간</div><div class="info-val info-val-mono">${d.period}</div></div>
-    <div><div class="info-key">시험자 수</div><div class="info-val info-val-mono">${d.subjects}</div></div>
-    <div><div class="info-key">진행상태</div><div class="info-val">${d.status}</div></div>
-    <div><div class="info-key">대조군</div><div class="info-val">${d.ctrl||'-'}</div></div>
-    <div><div class="info-key">사용제품</div><div class="info-val">${d.product||'-'}</div></div>
-    <div><div class="info-key">임상업체</div><div class="info-val">${d.agency||'-'}</div></div>`;
+    <div class="info-item"><div class="info-key">제품유형</div><div class="info-val">${d.type}</div></div>
+    <div class="info-item"><div class="info-key">협업기업</div><div class="info-val">${d.company||'-'}</div></div>
+    <div class="info-item"><div class="info-key">시험기간</div><div class="info-val info-val-mono">${d.period}</div></div>
+    <div class="info-item"><div class="info-key">시험자 수</div><div class="info-val info-val-mono">${d.subjects}</div></div>
+    <div class="info-item"><div class="info-key">진행상태</div><div class="info-val">${d.status}</div></div>
+    <div class="info-item"><div class="info-key">대조군</div><div class="info-val">${d.ctrl||'-'}</div></div>
+    <div class="info-item"><div class="info-key">사용제품</div><div class="info-val">${d.product||'-'}</div></div>
+    <div class="info-item"><div class="info-key">임상업체</div><div class="info-val">${d.agency||'-'}</div></div>`;
   const ev=d.eval.split('\n').filter(Boolean);
-  document.getElementById('modal-evals').innerHTML=ev.map(e=>`<span class="eval-tag">${e}</span>`).join('');
-  renderFileList(code);
+  document.getElementById('modal-evals').innerHTML=ev.map(e=>`<span class="eval-tag">${e}</span>`).join('')||'<span style="color:var(--text3);font-size:12px">정보 없음</span>';
+
+  // 보고서 파일 4개 언어
+  const docs=[
+    {lang:'국문',icon:'📄',name:d.file_ko,url:d.url_ko},
+    {lang:'영문',icon:'📄',name:d.file_en,url:d.url_en},
+    {lang:'일어',icon:'📄',name:d.file_jp,url:d.url_jp},
+    {lang:'중문',icon:'📄',name:'',url:d.url_cn},
+  ];
+  document.getElementById('modal-docs').innerHTML=docs.map(doc=>{
+    if(doc.url){
+      return`<a class="doc-item" href="${doc.url}" target="_blank" rel="noopener">
+        <span class="doc-icon">${doc.icon}</span>
+        <div class="doc-info"><div class="doc-lang">${doc.lang} 보고서</div><div class="doc-name">${doc.name||'파일 보기'}</div></div>
+        <span class="doc-arrow">↗</span>
+      </a>`;
+    } else if(doc.name){
+      return`<div class="doc-item" style="cursor:default">
+        <span class="doc-icon">📄</span>
+        <div class="doc-info"><div class="doc-lang">${doc.lang} 보고서</div><div class="doc-name">${doc.name}</div></div>
+      </div>`;
+    } else {
+      return`<div class="doc-item empty">
+        <span class="doc-icon">—</span>
+        <div class="doc-info"><div class="doc-lang">${doc.lang}</div><div class="doc-name">파일 없음</div></div>
+      </div>`;
+    }
+  }).join('');
+
   document.getElementById('modal').classList.add('open');
 }
-
-/* ── FILES ── */
-function renderFileList(code){
-  const files=fileStore[code]||[];
-  const c=document.getElementById('modal-files');
-  if(!files.length){c.innerHTML=`<div class="no-file-msg">📭 첨부된 보고서 파일이 없습니다</div>`;return;}
-  c.innerHTML=files.map((f,i)=>`<div class="file-item"><span class="file-icon">${getIcon(f.name)}</span><div><div class="file-name">${f.name}</div><div class="file-type">${f.size} · ${f.date}</div></div><span class="file-dl" onclick="dlFile('${code}',${i})">⬇</span></div>`).join('');
-}
-function getIcon(n){if(n.endsWith('.pdf'))return'📕';if(n.match(/\.xlsx?/))return'📗';if(n.match(/\.pptx?/))return'📙';if(n.match(/\.docx?/))return'📘';return'📄';}
-function handleFileUpload(event){
-  const code=selectedRow?.code;if(!code)return;
-  if(!fileStore[code])fileStore[code]=[];
-  Array.from(event.target.files).forEach(f=>{
-    const r=new FileReader();
-    r.onload=e=>{fileStore[code].push({name:f.name,size:fmt(f.size),date:new Date().toLocaleDateString('ko-KR'),data:e.target.result});localStorage.setItem('mim_files',JSON.stringify(fileStore));renderFileList(code);renderTable();};
-    r.readAsDataURL(f);
-  });
-  event.target.value='';
-}
-function dlFile(code,idx){const f=fileStore[code]?.[idx];if(!f)return;const a=document.createElement('a');a.href=f.data;a.download=f.name;a.click();}
-function fmt(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
 
 setInterval(()=>{if(currentUser)loadData();},5*60*1000);
 </script>
