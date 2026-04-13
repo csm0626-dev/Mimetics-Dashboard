@@ -339,17 +339,27 @@ function parseCSVLine(line){
 async function loadData(){
   document.getElementById('sync-label').textContent='동기화 중...';
   try{
-    const r=await fetch(CSV_URL);
+    const r=await fetch(CSV_URL+'&t='+Date.now());
     if(!r.ok)throw new Error();
     const text=await r.text();
-    const lines=text.trim().split('\n');
-    // 헤더: No.,제품 유형,임상번호,임상명,평가항목,시험 기간,사용 제품,협업기업,진행상태,대조군 여부,시험자 수,임상업체,논문화 진행 단계,논문 파일,,국문,번역본(영문),번역본(일어),국문_URL,영문_URL,일어_URL,중문_URL
-    // 인덱스: 0        1         2       3     4       5         6        7       8        9           10        11      12               13        14  15    16            17            18       19      20      21
+    // 줄바꿈 포함 셀 처리: 따옴표 홀수면 다음 줄과 합치기
+    const rawLines=text.trim().split('\n');
+    const lines=[];
+    let i=0;
+    while(i<rawLines.length){
+      let combined=rawLines[i];
+      while((combined.match(/"/g)||[]).length%2!==0&&i+1<rawLines.length){
+        i++;combined+='\n'+rawLines[i];
+      }
+      lines.push(combined);i++;
+    }
+    // 실제 헤더 컬럼 확인 후 인덱스 매핑
+    // [0]No [1]제품유형 [2]임상번호 [3]임상명 [4]평가항목 [5]시험기간 [6]사용제품 [7]협업기업 [8]진행상태 [9]대조군 [10]시험자수 [11]임상업체 [12]논문화진행단계 [13]논문파일 [14]국문 [15]영문 [16]일어 [17]국문_URL [18]영문_URL [19]일어_URL [20]중문_URL
     allData=[];
-    for(let i=1;i<lines.length;i++){
-      const c=parseCSVLine(lines[i]);
+    for(let j=1;j<lines.length;j++){
+      const c=parseCSVLine(lines[j]);
       const no=c[0]?.replace(/"/g,'').trim();
-      if(!no||isNaN(no))continue; // No. 숫자인 행만
+      if(!no||isNaN(no))continue;
       allData.push({
         no:no,
         type:c[1]||'',
@@ -364,13 +374,13 @@ async function loadData(){
         subjects:c[10]||'',
         agency:c[11]||'',
         pubStage:c[12]||'',
-        file_ko:c[15]||'',   // 국문 파일명
-        file_en:c[16]||'',   // 영문 파일명
-        file_jp:c[17]||'',   // 일어 파일명
-        url_ko:c[18]||'',    // 국문 URL
-        url_en:c[19]||'',    // 영문 URL
-        url_jp:c[20]||'',    // 일어 URL
-        url_cn:c[21]||'',    // 중문 URL
+        file_ko:c[14]||'',   // 국문 파일명
+        file_en:c[15]||'',   // 영문 파일명
+        file_jp:c[16]||'',   // 일어 파일명
+        url_ko:c[17]||'',    // 국문 URL
+        url_en:c[18]||'',    // 영문 URL
+        url_jp:c[19]||'',    // 일어 URL
+        url_cn:c[20]||'',    // 중문 URL
       });
     }
     document.getElementById('sync-label').textContent=`동기화 완료 ${new Date().toLocaleTimeString('ko-KR')}`;
