@@ -500,17 +500,19 @@ function renderTable(){
       <td><span class="company-pill">${d.company||'-'}</span></td>
       <td><span class="badge ${d.status.includes('완료')?'badge-done':'badge-inprog'}">${d.status}</span></td>
       <td>${d.ctrl&&d.ctrl!=='-'?`<span class="badge badge-ctrl" style="font-size:10px">${d.ctrl.split('\n')[0]}</span>`:`<span class="badge badge-no">없음</span>`}</td>
-      <td>${d.ctrl&&d.ctrl!=='-'?`<span class="badge badge-ctrl" style="font-size:10px">${d.ctrl.split('\n')[0]}</span>`:`<span class="badge badge-no">없음</span>`}</td>
-      <td>${(() => {
-        // 요약본 URL (국문 우선, 없으면 영문)
-        const url = d.sum_url_ko || d.sum_url_en || d.sum_url_jp || d.sum_url_cn || '';
-        if(url){
-          const urls = url.split('\n').filter(Boolean);
-          return urls.map(u=>`<a class="file-btn has" href="${u.trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📊 요약본</a>`).join('');
-        }
-        return`<span class="file-btn none">없음</span>`;
+      <td style="white-space:nowrap">${(()=>{
+        const url=d.sum_url_ko||d.sum_url_en||d.sum_url_jp||d.sum_url_cn||'';
+        if(!url)return`<span class="file-btn none">없음</span>`;
+        return url.split('\n').filter(Boolean).map(u=>`<a class="file-btn has" href="${u.trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📊 요약본</a>`).join(' ');
       })()}</td>
-      <td><div class="files-cell">${fileBtns}</div></td>
+      <td style="white-space:nowrap">${(()=>{
+        let btns='';
+        if(d.url_ko) btns+=`<a class="file-btn has" href="${d.url_ko.split('\n')[0].trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 국문</a> `;
+        if(d.url_en) btns+=`<a class="file-btn has" href="${d.url_en.split('\n')[0].trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 영문</a> `;
+        if(d.url_jp) btns+=`<a class="file-btn has" href="${d.url_jp.split('\n')[0].trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 일어</a> `;
+        if(d.url_cn) btns+=`<a class="file-btn has" href="${d.url_cn.split('\n')[0].trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📄 중문</a>`;
+        return btns||`<span class="file-btn none">없음</span>`;
+      })()}</td>
     </tr>`;
   }).join('');
   const tot=filteredData.length,tp=Math.ceil(tot/PAGE_SIZE);
