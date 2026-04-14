@@ -236,7 +236,7 @@ td.code{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
           <th onclick="sortBy('company')" data-col="company">협업기업</th>
           <th onclick="sortBy('status')" data-col="status">상태</th>
           <th>대조군</th>
-          <th onclick="sortBy('subjects')" data-col="subjects">시험자</th>
+          <th>요약본</th>
           <th>보고서</th>
         </tr></thead>
         <tbody id="table-body"><tr><td colspan="11"><div class="loading"><div class="spinner"></div><span>로딩 중...</span></div></td></tr></tbody>
@@ -261,6 +261,10 @@ td.code{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
       <div class="modal-section">
         <div class="modal-section-title">평가항목</div>
         <div class="eval-tags" id="modal-evals"></div>
+      </div>
+      <div class="modal-section" id="modal-summary">
+        <div class="modal-section-title">요약본</div>
+        <div class="doc-grid"></div>
       </div>
       <div class="modal-section">
         <div class="modal-section-title">결과보고서 파일</div>
@@ -374,13 +378,17 @@ async function loadData(){
         subjects:c[10]||'',
         agency:c[11]||'',
         pubStage:c[12]||'',
-        file_ko:c[14]||'',   // 국문 파일명
-        file_en:c[15]||'',   // 영문 파일명
-        file_jp:c[16]||'',   // 일어 파일명
-        url_ko:c[17]||'',    // 국문 URL
-        url_en:c[18]||'',    // 영문 URL
-        url_jp:c[19]||'',    // 일어 URL
-        url_cn:c[20]||'',    // 중문 URL
+        file_ko:c[14]||'',      // 국문 파일명
+        file_en:c[15]||'',      // 영문 파일명
+        file_jp:c[16]||'',      // 일어 파일명
+        sum_url_ko:c[17]||'',   // 요약본 국문 URL
+        sum_url_en:c[18]||'',   // 요약본 영문 URL
+        sum_url_jp:c[19]||'',   // 요약본 일어 URL
+        sum_url_cn:c[20]||'',   // 요약본 중문 URL
+        url_ko:c[21]||'',       // 국문 URL
+        url_en:c[22]||'',       // 영문 URL
+        url_jp:c[23]||'',       // 일어 URL
+        url_cn:c[24]||'',       // 중문 URL
       });
     }
     document.getElementById('sync-label').textContent=`동기화 완료 ${new Date().toLocaleTimeString('ko-KR')}`;
@@ -492,7 +500,16 @@ function renderTable(){
       <td><span class="company-pill">${d.company||'-'}</span></td>
       <td><span class="badge ${d.status.includes('완료')?'badge-done':'badge-inprog'}">${d.status}</span></td>
       <td>${d.ctrl&&d.ctrl!=='-'?`<span class="badge badge-ctrl" style="font-size:10px">${d.ctrl.split('\n')[0]}</span>`:`<span class="badge badge-no">없음</span>`}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${d.subjects}</td>
+      <td>${d.ctrl&&d.ctrl!=='-'?`<span class="badge badge-ctrl" style="font-size:10px">${d.ctrl.split('\n')[0]}</span>`:`<span class="badge badge-no">없음</span>`}</td>
+      <td>${(() => {
+        // 요약본 URL (국문 우선, 없으면 영문)
+        const url = d.sum_url_ko || d.sum_url_en || d.sum_url_jp || d.sum_url_cn || '';
+        if(url){
+          const urls = url.split('\n').filter(Boolean);
+          return urls.map(u=>`<a class="file-btn has" href="${u.trim()}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📊 요약본</a>`).join('');
+        }
+        return`<span class="file-btn none">없음</span>`;
+      })()}</td>
       <td><div class="files-cell">${fileBtns}</div></td>
     </tr>`;
   }).join('');
@@ -521,6 +538,29 @@ function openModal(code){
     <div class="info-item"><div class="info-key">임상업체</div><div class="info-val">${d.agency||'-'}</div></div>`;
   const ev=d.eval.split('\n').filter(Boolean);
   document.getElementById('modal-evals').innerHTML=ev.map(e=>`<span class="eval-tag">${e}</span>`).join('')||'<span style="color:var(--text3);font-size:12px">정보 없음</span>';
+
+  // 요약본 섹션
+  const sumUrls = [
+    {lang:'국문', url:d.sum_url_ko},
+    {lang:'영문', url:d.sum_url_en},
+    {lang:'일어', url:d.sum_url_jp},
+    {lang:'중문', url:d.sum_url_cn},
+  ].filter(s=>s.url);
+  
+  const sumSection = document.getElementById('modal-summary');
+  if(sumUrls.length>0){
+    sumSection.style.display='block';
+    sumSection.querySelector('.doc-grid').innerHTML = sumUrls.map(s=>{
+      const urls=s.url.split('\n').filter(Boolean);
+      return urls.map((u,i)=>`<a class="doc-item" href="${u.trim()}" target="_blank" rel="noopener">
+        <span class="doc-icon">📊</span>
+        <div class="doc-info"><div class="doc-lang">${s.lang} 요약본${urls.length>1?` ${i+1}`:''}</div><div class="doc-name">파일 보기</div></div>
+        <span class="doc-arrow">↗</span>
+      </a>`).join('');
+    }).join('');
+  } else {
+    sumSection.style.display='none';
+  }
 
   // 보고서 파일 - 언어별로 복수 파일 처리
   function makeDocItems(lang, namesStr, urlsStr) {
